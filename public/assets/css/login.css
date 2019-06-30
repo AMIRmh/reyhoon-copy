@@ -1,0 +1,163 @@
+._header {
+    height: 4rem;
+    border-bottom-style: solid;
+    border-bottom-color: gray;
+    border-width: .01rem;
+}
+
+._header > a > img:hover {
+    /*padding-left: 5.5rem;*/
+    width: 7.5rem;
+    height: 4.5rem;
+    position: relative;
+    transform: translate(33rem  , 0);
+    cursor: pointer;
+}
+
+._header >  a > img {
+    /*padding-left: 5.5rem;*/
+    width: 7.5rem;
+    height: 4.5rem;
+    position: relative;
+    transform: translate(33rem  , 0);
+    cursor: pointer;
+}
+
+._bot_header {
+    margin-top: 1rem;
+    position: relative;
+    height: 3.5rem;
+    display: flex;
+    background: white;
+    justify-content: center;
+    text-align: center;
+    color: grey;
+    box-shadow: 0 0.1rem 0.2rem rgba(0,0,0,.11);
+    -webkit-box-shadow: 0 0.1rem 0.2rem rgba(0,0,0,.11);
+}
+
+._login {
+    color: #d40062;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 10px;
+    border-width: 0 0 2px;
+    border-style: solid;
+    width: 15%;
+}
+
+
+._register {
+    /*color: #d40062;*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 10px;
+    width: 15%;
+}
+
+
+._main {
+    background-color: #eeeeee;
+    font-family: Shabnam;
+    text-align: center;
+}
+
+._main > h3 {
+    line-height: 7rem;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+._main > p {
+    font-size: .8rem;
+}
+
+._email {
+    background-color: white;
+    display: inline-block;
+    width: 50%;
+    margin: 3px auto;
+    border-radius: 5px;
+    padding: .7rem 0;
+    text-align: right;
+
+}
+
+._email > input {
+    box-sizing: border-box;
+    display: inline-block;
+    direction: rtl;
+    background: none;
+    border: none;
+    width: 80%;
+    font-size: 1rem;
+    font-family: Shabnam;
+
+}
+
+._email > i {
+    color: #aaaaaa;
+    padding-right: 1rem;
+}
+
+._forget {
+    width: 75%;
+    text-align: right;
+}
+
+._main > div > a {
+    text-decoration: none;
+    text-align: right;
+    direction: rtl;
+    font-size: .9rem;
+}
+
+._main > button {
+    font-family: Shabnam;
+    display: inline-block;
+    margin: 4rem;
+    width: 12%;
+    height: 40px;
+    border: none;
+    border-radius: 100px;
+    background-color: #d40062;
+}
+
+
+
+
+._social {
+    text-align: center;
+    border: 0 solid #eee;
+    border-width: 0 0 1px;
+    padding-right: 40px;
+    padding-bottom: 30px;
+}
+
+._social > li {
+    color: #fff;
+    display: inline-flex;
+    list-style: none;
+    width: 3px;
+    height: 3px;
+    justify-content: center;
+    align-items: center;
+    background: gray;
+    border-radius: 50%;
+    margin: .5rem;
+    padding: .75rem;
+}
+
+._links {
+    direction: rtl;
+    display: flex;
+    justify-content: center;
+}
+
+._links > li {
+    display: inline;
+    margin: 1rem;
+    color: gray;
+}
