@@ -34,148 +34,36 @@ router.get('/', (req, res) => {
     })
 });
 
-router.get('/areas', (req, res) => {
-   let sql = 'select distinct address.area from address';
-   con.query(sql, (err, result) => {
-      if (err) throw err;
-       res.writeHead(200, {"Content-Type": "text/json; charset=utf-8"});
-       res.write(JSON.stringify(result), "utf-8");
-       res.end();
-   });
-});
-
-
-router.get('/:id', (req, res) => {
-    let sql = 'select * from restaurants where name=' + con.escape(req.params.id);
+router.post('/', (req, res) => {
+    let sql = 'insert into address (city, area, addressLine) values (' + con.escape(req.body.city) + ',' +
+        con.escape(req.body.area) + ',' + con.escape(req.body.addressLine) +  ')';
     con.query(sql, (err, result) => {
         if (err) throw err;
-        res.writeHead(200, {"Content-Type": "text/json; charset=utf-8"});
-        res.write(JSON.stringify(result), "utf-8");
-        res.end();
-    });
-});
-
-router.get('/:id/comments', async function(req, res) {
-    let sql = 'select * from restaurants inner join restcom on restaurants.comments = restcom.restid ' +
-        'inner join comments on comments.id = restcom.comid where restaurants.name=' +
-        con.escape(req.params.id);
-    con.query(sql, (err, result) => {
-        if (err) throw err;
-        res.writeHead(200, {"Content-Type": "text/json; charset=utf-8"});
-        res.write(JSON.stringify(result), "utf-8");
-        res.end();
-    });
-});
-
-router.post('/:id/comments', (req, res) => {
-    var sql = 'insert into comments (author, quality, packaging, deliveryTime, txt, created_at) ' +
-        'values (' + con.escape(req.body.author) + ',' + con.escape(req.body.quality) + ','
-        + con.escape(req.body.packaging) + ',' + con.escape(req.body.deliveryTime) + ',' +
-        con.escape(req.body.txt) + ',\'' + moment(Date.now()).format('YYYY-MM-DD HH:mm:ss') + '\')';
-    console.log(sql);
-
-    con.query(sql, (err, result) => {
-        if (err) throw err;
-        let newComId = result.insertId;
-        sql = 'select restaurants.id as id from restaurants inner join restcom on restcom.restid = restaurants.id ' +
-            'inner join comments on comments.id = restcom.comid where restaurants.name = ' +
-            con.escape(utf8.decode(req.params.id));
-        console.log(sql);
+        let addressId = result[0].insertId;
+        sql = 'insert into restaurants (name) values (' + con.escape(utf8.decode(req.body.name)) + ')';
         con.query(sql, (err, result) => {
             if (err) throw err;
-            console.log(result);
-            let comCount = result.length + 1;
-            let restId = result[0].id;
-            sql = 'insert into restcom (restid, comid) values (' + restId + ',' + newComId  +')';
+            let insertedId = result.insertId;
+            sql = 'update restaurants set logo =  ' + insertedId + '.jpeg' +
+                ', openingTime = ' + req.body.openingTime +
+                ', closingTime = ' + req.body.closingTime +
+                ', averageRate = 0' +
+                ', address = ' + addressId +
+                ', categories = ' + insertedId +
+                ', foods = ' + insertedId +
+                ', comments = ' + insertedId +
+                ' where id = ' + insertedId;
+
             con.query(sql, (err, result) => {
                 if (err) throw err;
-                sql = 'select sum(comments.quality) as sum from restaurants ' +
-                    'inner join restcom on restaurants.id = restcom.restid ' +
-                    'inner join comments on comments.id = restcom.comid where restaurants.id = ' +
-                    restId;
-                con.query(sql, (err, result) => {
-                    if (err) throw err;
-                    console.log(result[0].sum);
-                    sql = 'update restaurants set averageRate = ' + result[0].sum / comCount + ' where id = ' +
-                            restId;
-                    con.query(sql, (err, result) => {
-                        if (err) throw err;
-                        res.end('successfully added comment');
-                    })
-                });
+                res.end('successfully added');
             });
         });
     });
 });
 
-router.post('/add/restaurants', async function(req, res) {
-   const schema = await loadSchema('restaurants');
-   await schema.insertOne({
-       name: req.body.name,
-       logo: "",
-       openingTime: req.body.open,
-       closingTime: req.body.close,
-       averageRate: req.body.rate,
-       address: req.body.address,
-       categories: Array.isArray(req.body.categories) ?  req.body.categories : [req.body.categories],
-       foods: Array.isArray(req.body.foods) ?  req.body.foods : [req.body.foods],
-       comments: Array.isArray(req.body.comments) ? req.body.comments : [req.body.comments],
-   });
-   res.status(201).end();
+router.get('/poster/:id', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/posters/' + req.params.id));
 });
-
-
-router.post('/add/foods', async function(req, res) {
-    const schema = await loadSchema('foods');
-    await schema.insertOne({
-        name: req.body.name,
-        price: req.body.price,
-        description: req.body.description === undefined ? "" : req.body.description,
-        foodset: req.body.foodset
-    });
-    res.status(201).end();
-});
-
-
-router.post('/add/address', async function(req, res) {
-    const schema = await loadSchema('address');
-    await schema.insertOne({
-        city: req.body.city,
-        area: req.body.area,
-        addressLine: req.body.addressLine
-    });
-    res.status(201).end();
-});
-
-router.post('/add/comments', async function(req, res) {
-    const schema = await loadSchema('comments');
-    await schema.insertOne({
-        author: req.body.author,
-        quality: req.body.quality,
-        packaging: req.body.packaging,
-        deliveryTime: req.body.deliveryTime,
-        text: req.body.text,
-        created_at: new Date()
-    });
-    res.status(201).end();
-});
-
-router.post('/add/categories', async function(req, res) {
-    const schema = await loadSchema('categories');
-    await schema.insertOne({
-        name: req.body.name
-    });
-    res.status(201).end();
-});
-
-
-async function loadSchema(schema) {
-  const client = await mongodb.connect
-  ('mongodb+srv://root:123qwe@cluster0-q50fw.mongodb.net/test?retryWrites=true&w=majority', {
-    useNewUrlParser: true
-  });
-
-  return client.db('test').collection(schema);
-}
 
 module.exports = router;
