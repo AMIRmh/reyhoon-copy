@@ -117,12 +117,18 @@ router.get('/:id', (req, res) => {
 });
 
 router.get('/:id/comments', async function(req, res) {
-    let sql = 'select * from restaurants inner join restcom on restaurants.comments = restcom.restid ' +
-        'inner join comments on comments.id = restcom.comid where restaurants.name=' +
-        con.escape(req.params.id);
+    let sql = 'select comments.* from restaurants inner join restcom on restaurants.comments = restcom.restid ' +
+        'inner join comments on comments.id = restcom.comid where restaurants.id=' +
+        con.escape(req.params.id) +
+    ' order by created_at asc ';
+    console.log(sql)
     con.query(sql, (err, result) => {
         if (err) throw err;
-        res.writeHead(200, {"Content-Type": "text/json; charset=utf-8"});
+        // let resultFinal = [];
+        // console.log(result);
+        // for(let i = 0; i < result.length; i++)
+        //     resultFinal[i] = result[i].comment
+        res.writeHead(200, {"Content-Type": "text/json; charset=utf-8", "Access-Control-Allow-Origin": "*"});
         res.write(JSON.stringify(result), "utf-8");
         res.end();
     });
