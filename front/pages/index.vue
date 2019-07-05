@@ -323,7 +323,6 @@
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
 import main from '../assets/js/jscript-main.js'
 
 export default {
